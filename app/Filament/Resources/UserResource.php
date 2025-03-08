@@ -23,7 +23,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationGroup = 'Roles';
 
-    protected static ?string $navigationLabel = 'User';
+    protected static ?string $navigationLabel = 'Pengguna';
 
     protected static ?string $slug = 'user';
 
@@ -65,6 +65,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

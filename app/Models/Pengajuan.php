@@ -2,17 +2,33 @@
 
 namespace App\Models;
 
+use App\Observers\PengajuanObserver;
 use Illuminate\Database\Eloquent\Model;
 
 class Pengajuan extends Model
 {
     protected $table = 'pengajuans';
 
-    protected $guarded = [];
+   protected $fillable = [
+        'barang_id',
+        'user_id',
+        'kategori_id',
+        'jenis_id',
+        'Jumlah_barang',
+        'Jumlah_barang_diajukan',
+        'status',
+        'Tanggal_pengajuan',
+        'keterangan',
+        'approved_by',
+        'approved_at',
+        'rejected_by',
+        'rejected_at',
+        'reject_reason'
+    ];
 
-    // protected $casts = [
-    //     'approved_at' => 'datetime',
-    // ];
+    protected $casts = [
+        'Tanggal_pengajuan' => 'datetime',
+    ];
 
     public function barangs(){
         return $this->belongsTo(Barang::class, 'barang_id');
@@ -26,8 +42,8 @@ class Pengajuan extends Model
         return $this->belongsTo(jenis::class, 'jenis_id');
     }
 
-    public function Users(){
-        return $this->belongsTo(User::class);
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function approver()
@@ -35,14 +51,8 @@ class Pengajuan extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    protected static function boot()
+    public function rejected()
     {
-        parent::boot();
-
-        static::creating(function($pengajuan){
-            if(!$pengajuan->user_id){
-                $pengajuan->user_id = request()->user()->id;
-            }
-        });
+        return $this->belongsTo(User::class, 'rejected_by');
     }
 }

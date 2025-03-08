@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('barang_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('kategori_id');
+            $table->unsignedBigInteger('kategori_id')->default(1);
             $table->unsignedBigInteger('jenis_id');
             $table->integer('Jumlah_barang');
             $table->integer('Jumlah_barang_diajukan');

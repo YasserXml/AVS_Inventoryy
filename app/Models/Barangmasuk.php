@@ -8,7 +8,16 @@ class Barangmasuk extends Model
 {
     protected $table = "barangmasuks";
 
-    protected $guarded = [];
+    protected $fillable = [
+            'Serial_number',
+            'Kode_barang',
+            'Nama_barang',
+            'kategoris_id',
+            'jenis_id',
+            'Jumlah_barang',
+            'Harga_barang',
+            'Tanggal_masuk_barang'
+    ];
     //Relasi ke tabel laporan
     public function laporans()
     {

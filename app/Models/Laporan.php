@@ -10,17 +10,31 @@ class Laporan extends Model
 
     protected $guarded = [];
 
-    public function barangs()
+    public function barang()
     {
         return $this->belongsTo(Barang::class);
     }
 
-    public function barangmasuks()
+    public function barangmasuk()
     {
         return $this->belongsTo(Barangmasuk::class);
     }
-    public function barangkeluars()
+
+    public function barangkeluar()
     {
         return $this->belongsTo(Barangkeluar::class);
+    }
+
+    public function pengajuan()
+    {
+        return $this->belongsTo(Pengajuan::class);
+    }
+    public function jenis()
+    {
+        return $this->belongsTo(Jenis::class);
+    }
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class);
     }
 }

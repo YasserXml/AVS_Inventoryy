@@ -39,8 +39,7 @@ class PengajuanPolicy
      */
     public function update(User $user, Pengajuan $pengajuan): bool
     {
-        return $user->hasAnyRole(['super_admin', 'admin']) ||
-            ($pengajuan->user_id === $user->id && $pengajuan->status === 'pending');
+        return $user->can('update_pengajuan');
     }
 
     /**

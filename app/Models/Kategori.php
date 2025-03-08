@@ -8,7 +8,10 @@ class Kategori extends Model
 {
     protected $table = 'kategoris';
 
-    protected $guarded  = [];
+    protected $fillable = [
+        'Kategori_barang'
+    ];
+
 
     public function barangs()
     {
@@ -19,8 +22,14 @@ class Kategori extends Model
     {
         return $this->hasMany(Pengajuan::class);
     }
+
     public function barangmasuks()
     {
         return $this->hasMany(Barangmasuk::class);
+    }
+
+    public function jenis()
+    {
+        return $this->hasMany(Jenis::class);
     }
 }

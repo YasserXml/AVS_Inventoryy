@@ -12,12 +12,11 @@ class BarangmasukObserver
      */
     public function created(Barangmasuk $barangmasuk): void
     {
-        $barang = Barang::where('Serial_number', $barangmasuk->Serial_number)->first();
+        $barangs = Barang::where('Serial_number', $barangmasuk->Serial_number)->first();
         
-        if($barang){
-            $barang->update([
-                'Jumlah_barang' => $barang->Jumlah_barang + $barangmasuk->Jumlah_barang,
-               'Harga_barang' => $barang->Harga_barang + $barangmasuk->Harga_barang,
+        if($barangs){
+            $barangs->update([
+                'Jumlah_barang' => $barangs->Jumlah_barang + $barangmasuk->Jumlah_barang,
             ]);
         }else{
             Barang::create([
@@ -26,6 +25,8 @@ class BarangmasukObserver
                 'Nama_barang' => $barangmasuk->Nama_barang,
                 'Jumlah_barang' => $barangmasuk->Jumlah_barang,
                 'Harga_barang' => $barangmasuk->Harga_barang,
+                'kategoris_id' => $barangmasuk->kategoris_id,  
+                'jenis_id' => $barangmasuk->jenis_id,    
             ]);
         }
     }

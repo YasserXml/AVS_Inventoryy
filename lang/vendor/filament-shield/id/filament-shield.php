@@ -7,11 +7,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'column.name' => 'Nama',
-    'column.guard_name' => 'Nama Penjaga',
-    'column.roles' => 'Peran',
-    'column.permissions' => 'Izin',
-    'column.updated_at' => 'Dirubah',
+    'column.name' => 'Roles',
+    'column.guard_name' => 'Guard Name',
+    'column.roles' => 'Roles',
+    'column.permissions' => 'Permissions',
+    'column.updated_at' => 'Updated At',
 
     /*
     |--------------------------------------------------------------------------
@@ -31,11 +31,12 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'nav.group' => 'Pelindung',
-    'nav.role.label' => 'Peran',
-    'nav.role.icon' => 'heroicon-o-shield-check',
-    'resource.label.role' => 'Peran',
-    'resource.label.roles' => 'Peran',
+    'nav.group' => 'Roles',
+    'nav.role.label' => 'Hak Akses',
+    'nav.role.icon' => 'heroicon-o-user-group',
+    'resource.label.role' => 'Hak akses',
+    'resource.label.roles' => 'Hak akses',
+
 
     /*
     |--------------------------------------------------------------------------

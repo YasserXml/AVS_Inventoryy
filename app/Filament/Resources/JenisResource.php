@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\JenisResource\Pages;
 use App\Filament\Resources\JenisResource\RelationManagers;
 use App\Models\Jenis;
+use App\Models\Kategori;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -21,8 +22,8 @@ class JenisResource extends Resource
     protected static ?string $navigationIcon = '';
 
     protected static ?string $navigationGroup = 'Master-barang';
-    
-    protected static ?string $navigationLabel = 'Jenis barang';
+
+    protected static ?string $navigationLabel = 'Jenis Barang';
 
     protected static ?string $slug = 'jenis';
 
@@ -32,9 +33,13 @@ class JenisResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('Jenis_barang')
-                ->label('Jenis barang')
-                ->required(),
+                Forms\Components\Select::make('kategori_id')
+                    ->label('Kategori barang')
+                    ->options(Kategori::pluck('Kategori_barang', 'id'))
+                    ->required(),
+                Forms\Components\TextInput::make('Jenis_barang')
+                    ->required()
+                    ->maxLength(255)
             ]);
     }
 
@@ -42,11 +47,11 @@ class JenisResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('kategori.Kategori_barang')
+                    ->label('Kategori barang')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('Jenis_barang')
-                ->searchable()
-                ->sortable()
-                ->label('Jenis barang')
-                ->alignCenter(),
+                    ->searchable()
             ])
             ->filters([
                 //

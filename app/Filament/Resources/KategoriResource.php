@@ -22,7 +22,7 @@ class KategoriResource extends Resource
 
     protected static ?string $navigationGroup = 'Master-barang';
 
-    protected static ?string $navigationLabel = 'Kategori barang';
+    protected static ?string $navigationLabel = 'Kategori Barang';
 
     protected static ?int $navigationSort = 2;
 
@@ -31,9 +31,10 @@ class KategoriResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('Kategori_barang')
+                Forms\Components\TextInput::make('Kategori_barang')
                     ->label('Kategori barang')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 

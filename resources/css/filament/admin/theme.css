@@ -1,0 +1,9 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+@config 'tailwind.config.js';
+
+
+.fi-sidebar-nav::-webkit-scrollbar, 
+.filament-sidebar-nav::-webkit-scrollbar, 
+.filament-sidebar::-webkit-scrollbar {
+    display: none !important;  /* Chrome, Safari and Opera */
+}

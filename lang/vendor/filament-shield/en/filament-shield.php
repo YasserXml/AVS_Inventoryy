@@ -7,7 +7,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'column.name' => 'Name',
+    'column.name' => 'Roles',
     'column.guard_name' => 'Guard Name',
     'column.roles' => 'Roles',
     'column.permissions' => 'Permissions',
@@ -19,7 +19,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'field.name' => 'Name',
+    'field.name' => 'Roles',
     'field.guard_name' => 'Guard Name',
     'field.permissions' => 'Permissions',
     'field.select_all.name' => 'Select All',
@@ -31,11 +31,11 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'nav.group' => 'Filament Shield',
-    'nav.role.label' => 'Roles',
-    'nav.role.icon' => 'heroicon-o-shield-check',
-    'resource.label.role' => 'Role',
-    'resource.label.roles' => 'Roles',
+    'nav.group' => 'Roles',
+    'nav.role.label' => 'Hak akses',
+    'nav.role.icon' => 'heroicon-o-user-group',
+    'resource.label.role' => 'Hak akses',
+    'resource.label.roles' => 'Hak akses',
 
     /*
     |--------------------------------------------------------------------------

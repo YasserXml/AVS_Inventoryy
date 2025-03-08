@@ -16,15 +16,14 @@ return new class extends Migration
             $table->string('Serial_number');
             $table->integer('Kode_barang');
             $table->string('Nama_barang');
-            $table->unsignedBigInteger('kategoris_id');
-            $table->unsignedBigInteger('jenis_id');
+            $table->foreignId('kategoris_id')->constrained('kategoris');
+            $table->foreignId('jenis_id')->constrained('jenis');
             $table->string('Jumlah_barang');
             $table->integer('Harga_barang');
             $table->date('Tanggal_masuk_barang');
             $table->timestamps();
 
-            $table->foreign('kategoris_id')->references('id')->on('kategoris')->onDelete('cascade');
-            $table->foreign('jenis_id')->references('id')->on('jenis')->onDelete('cascade');
+           
         });
     }
 

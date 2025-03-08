@@ -19,8 +19,14 @@ class Jenis extends Model
     {
         return $this->hasMany(Pengajuan::class);
     }
+
     public function barangmasuks()
     {
         return $this->hasMany(Barangmasuk::class);
+    }
+
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class);
     }
 }

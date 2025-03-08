@@ -4,6 +4,7 @@ namespace App\Filament\Resources\BarangmasukResource\Pages;
 
 use App\Filament\Resources\BarangmasukResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
 class EditBarangmasuk extends EditRecord
@@ -20,5 +21,14 @@ class EditBarangmasuk extends EditRecord
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
+    }
+
+    protected function getCreatedNotification(): ?Notification
+    {
+    return Notification::make()
+        ->success()
+        ->title('Data tersimpan')
+        ->body('Data barang baru berhasil diupdate')
+        ->seconds(5);
     }
 }
