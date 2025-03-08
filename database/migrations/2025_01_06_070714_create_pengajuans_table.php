@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('barang_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('Nama_barang');
             $table->unsignedBigInteger('kategori_id');
             $table->unsignedBigInteger('jenis_id');
             $table->integer('Jumlah_barang');

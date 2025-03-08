@@ -34,4 +34,15 @@ class Pengajuan extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function($pengajuan){
+            if(!$pengajuan->user_id){
+                $pengajuan->user_id = request()->user()->id;
+            }
+        });
+    }
 }

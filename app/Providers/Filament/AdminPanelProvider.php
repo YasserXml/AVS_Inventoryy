@@ -27,7 +27,6 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('Icon.png'))
             ->brandName('Inventory-AVS')
             // ->brandLogo(asset('ada.png'))
-            ->sidebarWidth('15rem')
             ->sidebarCollapsibleOnDesktop()
             ->spa()
             ->default()

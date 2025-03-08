@@ -8,16 +8,20 @@ use App\Models\Pengajuan;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PengajuanResource extends Resource
 {
@@ -35,7 +39,7 @@ class PengajuanResource extends Resource
 
     public static function canAcces(): bool
     {
-        return auth()->user()->hasAnyRole(['super_admin', 'admin', 'user']);  
+        return request()->user()->hasAnyRole(['super_admin', 'admin', 'user']);
     }
 
 
@@ -46,6 +50,8 @@ class PengajuanResource extends Resource
                 ->description('Masukkan detail pengajuan barang')
                 ->schema([
                     Grid::make(2)->schema([
+                        Hidden::make('user_id')
+                            ->default(fn() => request()->user()->id),
                         Forms\Components\Select::make('barang_id')
                             ->label('Pilih Barang')
                             ->relationship('barangs', 'Nama_barang')
@@ -64,7 +70,7 @@ class PengajuanResource extends Resource
                                     }
                                 }
                             })
-                            ->disable(fn() => $form->getOperation() === 'edit'),
+                            ->disabled(fn() => $form->getOperation() === 'edit'),
                         Forms\Components\TextInput::make('Jumlah_barang')
                             ->label('Stok Tersedia')
                             ->disabled()
@@ -80,16 +86,19 @@ class PengajuanResource extends Resource
                         Forms\Components\TextInput::make('Nama_barang')
                             ->required()
                             ->disabled(),
-                        
+
+                        Hidden::make('kategori_id'),
+                        Hidden::make('jenis_id'),
+
                         Forms\Components\Select::make('kategori_id')
                             ->relationship('kategoris', 'Kategori_barang')
                             ->required()
                             ->disabled(),
-                        
+
                         Forms\Components\Select::make('jenis_id')
                             ->relationship('jenis', 'Jenis_barang')
                             ->required()
-                            ->disabled()
+                            ->disabled(),
                     ]),
 
                     Grid::make(2)->schema([
@@ -110,7 +119,7 @@ class PengajuanResource extends Resource
                         ->rows(3)
                 ]),
 
-                Section::make('Approval')
+            Section::make('Approval')
                 ->description('Bagian ini hanya dapat diakses oleh admin')
                 ->schema([
                     Forms\Components\Select::make('status')
@@ -119,15 +128,15 @@ class PengajuanResource extends Resource
                             'approved' => 'Disetujui',
                             'rejected' => 'Ditolak'
                         ])
-                        ->disabled(fn () => !auth()->user()->hasAnyRole(['super_admin', 'admin']))
+                        ->disabled(fn() => request()->user()->hasAnyRole(['super_admin', 'admin']))
                         ->default('pending'),
-            
+
                     Forms\Components\Textarea::make('reject_reason')
                         ->label('Alasan Penolakan')
-                        ->visible(fn ($get) => $get('status') === 'rejected')
-                        ->required(fn ($get) => $get('status') === 'rejected')
+                        ->visible(fn($get) => $get('status') === 'rejected')
+                        ->required(fn($get) => $get('status') === 'rejected')
                 ])
-                ->visible(fn () => auth()->user()->hasAnyRole(['super_admin', 'admin']))
+                ->visible(fn() => request()->user()->hasAnyRole(['super_admin', 'admin']))
         ]);
     }
     public static function table(Table $table): Table
@@ -138,26 +147,26 @@ class PengajuanResource extends Resource
                     ->label('Pengaju')
                     ->searchable()
                     ->sortable(),
-                
+
                 Tables\Columns\TextColumn::make('Nama_barang')
                     ->searchable(),
-                
+
                 Tables\Columns\TextColumn::make('Jumlah_barang_diajukan')
                     ->label('Jumlah'),
-                
-                Tables\Columns\BadgeColumn  ::make('status')
+
+                Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'warning' => 'pending',
                         'success' => 'approved',
                         'danger' => 'rejected',
                     ]),
-                
+
                 Tables\Columns\TextColumn::make('Tanggal_pengajuan')
                     ->date(),
-                
+
                 Tables\Columns\TextColumn::make('approver.name')
                     ->label('Disetujui Oleh')
-                    ->visible(fn () => auth()->user()->hasAnyRole(['super_admin', 'admin']))
+                    ->visible(fn() => request()->user()->hasAnyRole(['super_admin', 'administrator']))
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -175,41 +184,44 @@ class PengajuanResource extends Resource
                         return $query
                             ->when(
                                 $data['from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('Tanggal_pengajuan', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('Tanggal_pengajuan', '>=', $date),
                             )
                             ->when(
                                 $data['until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('Tanggal_pengajuan', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('Tanggal_pengajuan', '<=', $date),
                             );
                     })
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->visible(fn (Pengajuan $record) => 
-                auth()->user()->hasAnyRole(['super_admin', 'admin']) || 
-                ($record->user_id === auth()->id() && $record->status === 'pending')
-            ),
-                Tables\Actions\Action::make('approved')
-                    ->label('Setujui')
-                    ->icon('heroicon-o-check')
-                    ->color('succes')
-                    ->requiresConfirmation()
-                    ->visible(fn (Pengajuan $record) => 
-                        auth()->user()->hasRole(['super_admin', 'admin']) && 
-                        $record->status === 'pending'
+                    ->visible(
+                        fn(Pengajuan $record) =>
+                        request()->user()->hasAnyRole(['super_admin', 'administrator']) ||
+                            ($record->user_id === request()->id() && $record->status === 'pending')
                     )
-                    ->visible(fn (Pengajuan $record) => 
-                        auth()->user()->hasRole('super_admin') && 
-                        $record->status === 'pending'
-                    )
-                    ->action(function (Pengajuan $record, array $data) {
-                        $record->update([
-                            'status' => 'rejected',
-                            'reject_reason' => $data['reject_reason'],
-                            'approved_by' => auth()->id(),
-                            'approved_at' => now(),
-                        ]);
+                    ->action(function (Pengajuan $record) {
+                        // Cek stok sebelum approve
+                        if ($record->Jumlah_barang_diajukan > $record->barang->Jumlah_barang) {
+                            Notification::make()
+                                ->title('Stok tidak mencukupi')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        DB::transaction(function () use ($record) {
+                            $record->update([
+                                'status' => 'approved',
+                                'appproved_by' => request()->id(),
+                                'approved_at' => now(),
+                            ]);
+                            $record->barang->decrement('Jumlah_barang', $record->Jumlah_barang_diajukan);
+                        });
+                        Notification::make()
+                            ->title('Pengajuan berhasil disetujui')
+                            ->success()
+                            ->send();
                     }),
+                
             ])
             ->bulkActions([])
             ->defaultSort('Tanggal_pengajuan', 'desc');
@@ -229,15 +241,5 @@ class PengajuanResource extends Resource
             'create' => Pages\CreatePengajuan::route('/create'),
             'edit' => Pages\EditPengajuan::route('/{record}/edit'),
         ];
-    }
-    public static function getEloquentQuery(): Builder
-    {
-        $query = parent::getEloquentQuery();
-        
-        if (!auth()->user()->hasRole('admin')) {
-            $query->where('user_id', auth()->id());
-        }
-        
-        return $query;
     }
 }
